@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>כלי ציור אינטראקטיבי</title>
     <style>
+        /* כל העיצוב נשאר ללא שינוי */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Arial', sans-serif;
             display: flex;
@@ -21,12 +21,11 @@
             background: linear-gradient(135deg, #ece9e6, #ffffff);
             padding: 20px;
         }
-
         #toolbar {
             display: flex;
-            flex-direction: row; /* מציג את הכפתורים בשורה אופקית */
+            flex-direction: row;
             align-items: center;
-            justify-content: space-between; /* מפזר את הכפתורים */
+            justify-content: space-between;
             padding: 10px;
             background-color: #ffffff;
             border-radius: 12px;
@@ -35,7 +34,6 @@
             width: 100%;
             max-width: 800px;
         }
-
         #toolbar input, #toolbar select, #toolbar button {
             margin: 0 5px;
             padding: 10px;
@@ -43,7 +41,6 @@
             border: 1px solid #ddd;
             background-color: #f1f1f1;
         }
-
         #toolbar button {
             cursor: pointer;
             transition: background-color 0.3s ease;
@@ -54,23 +51,19 @@
             height: 40px;
             padding: 8px;
         }
-
         #toolbar button:hover {
             background-color: #e0e0e0;
         }
-
         #toolbar button img {
             width: 24px;
             height: 24px;
         }
-
         .button-group {
             display: flex;
-            flex-direction: row; /* מציג את הכפתורים בשורה */
+            flex-direction: row;
             justify-content: space-between;
-            gap: 10px; /* מוסיף רווח בין הכפתורים */
+            gap: 10px;
         }
-
         #canvas-container {
             display: flex;
             justify-content: center;
@@ -82,14 +75,12 @@
             width: 100%;
             max-width: 800px;
         }
-
         canvas {
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 100%;
             height: auto;
         }
-
         #colorDisplay {
             width: 30px;
             height: 30px;
@@ -100,11 +91,9 @@
             display: inline-block;
             margin-left: 10px;
         }
-
         #toolbar input[type="color"] {
             display: none;
         }
-
         #menu-toggle {
             display: none;
             cursor: pointer;
@@ -114,42 +103,35 @@
             border: none;
             padding: 5px;
         }
-
         @media (max-width: 768px) {
             #menu-toggle {
                 display: block;
             }
-
             #toolbar {
                 display: none;
                 flex-direction: column;
                 align-items: center;
             }
-
             #toolbar.show {
                 display: flex;
             }
-
             #toolbar input, #toolbar select {
                 width: 80%;
                 margin: 5px 0;
             }
-
             #toolbar button {
                 width: 40px;
                 height: 40px;
                 padding: 8px;
                 margin: 5px;
             }
-
             #toolbar label {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
             }
-
             .button-group {
-                flex-direction: row; /* הכפתורים עדיין מוצגים בשורה */
+                flex-direction: row;
                 justify-content: space-between;
                 width: 100%;
                 max-width: 300px;
@@ -182,7 +164,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/2349/2349829.png" alt="Redo" width="24" height="24">
             </button>
             <button id="save">
-                <img src="https://cdn-icons-png.flaticon.com/512/2874/2874091.png" alt="Save" width="24" height="24">        
+                <img src="https://cdn-icons-png.flaticon.com/512/2874/2874091.png" alt="Save" width="24" height="24">
             </button>
         </div>
     </div>
@@ -213,7 +195,7 @@
         function resizeCanvas() {
             const containerWidth = document.getElementById('canvas-container').clientWidth;
             const containerHeight = window.innerHeight * 0.6;
-            canvas.width = containerWidth - 20; // 20px for padding
+            canvas.width = containerWidth - 20;
             canvas.height = containerHeight;
         }
 
@@ -296,7 +278,21 @@
         saveBtn.addEventListener('click', () => {
             const link = document.createElement('a');
             link.download = 'my_drawing.png';
-            link.href = canvas.toDataURL();
+            
+            // יצירת קנבס זמני עם רקע לבן
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            
+            // מילוי הקנבס הזמני ברקע לבן
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // העתקת הציור הנוכחי לקנבס הזמני
+            tempCtx.drawImage(canvas, 0, 0);
+            
+            link.href = tempCanvas.toDataURL();
             link.click();
         });
 
@@ -307,15 +303,15 @@
 
         // הוספת אירועי touch
         canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // מונע גלילה או רענון
+            e.preventDefault();
             startPosition(e.touches[0]);
         });
         canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // מונע גלילה בזמן מגע
+            e.preventDefault();
             draw(e.touches[0]);
         });
         canvas.addEventListener('touchend', (e) => {
-            e.preventDefault(); // סיום המגע
+            e.preventDefault();
             endPosition();
         });
 
