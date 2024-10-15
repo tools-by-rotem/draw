@@ -282,42 +282,46 @@
         function restoreState(state) {
             const img = new Image();
             img.src = state;
-            img.onload = () => ctx.drawImage(img, 0, 0);
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
         }
 
         clearCanvasBtn.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            undoStack = [];
-            redoStack = [];
+            saveState();
         });
 
         saveBtn.addEventListener('click', () => {
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d');
-
-            // צבע את הרקע בלבן
-            tempCtx.fillStyle = '#FFFFFF';
-            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-            // העתק את התוכן של הקנבס הנוכחי לקנבס החדש
-            tempCtx.drawImage(canvas, 0, 0);
-
-            // שמור את התמונה מהקנבס החדש
             const link = document.createElement('a');
             link.download = 'my_drawing.png';
-            link.href = tempCanvas.toDataURL();
+            link.href = canvas.toDataURL();
             link.click();
+        });
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mouseleave', endPosition);
+
+        // הוספת אירועי touch
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // מונע גלילה או רענון
+            startPosition(e.touches[0]);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // מונע גלילה בזמן מגע
+            draw(e.touches[0]);
+        });
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault(); // סיום המגע
+            endPosition();
         });
 
         menuToggle.addEventListener('click', () => {
             toolbar.classList.toggle('show');
         });
-
-        canvas.addEventListener('mousedown', startPosition);
-        canvas.addEventListener('mouseup', endPosition);
-        canvas.addEventListener('mousemove', draw);
     </script>
 </body>
 </html>
