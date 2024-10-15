@@ -112,40 +112,50 @@
             padding: 5px;
         }
         @media (max-width: 768px) {
-            #menu-toggle {
-                display: block;
-            }
-            #toolbar {
-                display: none;
-                flex-direction: column;
-                align-items: center;
-            }
-            #toolbar.show {
-                display: flex;
-            }
-            #toolbar input, #toolbar select {
-                width: 80%;
-                margin: 5px 0;
-            }
-            #toolbar button {
-                width: 40px;
-                height: 40px;
-                padding: 8px;
-                margin: 5px;
-            }
-            #toolbar label {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-            }
-            .button-group {
-                flex-direction: row;
-                justify-content: space-between;
-                width: 100%;
-                max-width: 300px;
-                margin-top: 10px;
-            }
+        #menu-toggle {
+            display: block;
         }
+        #toolbar {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        #toolbar.show {
+            display: flex;
+        }
+        #toolbar input, #toolbar select {
+            width: 80%;
+            margin: 5px 0;
+        }
+        #toolbar button {
+            width: 40px;
+            height: 40px;
+            padding: 8px;
+            margin: 5px;
+        }
+        #toolbar label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        #colorDisplay {
+            margin-left: 0;
+            margin-bottom: 10px;
+        }
+        #colorPicker {
+            position: static;
+            transform: none;
+            margin-top: 10px;
+        }
+        .button-group {
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+    }
     </style>
 </head>
 <body>
@@ -221,17 +231,32 @@
             };
         }
 
-        colorDisplay.addEventListener('click', function(e) {
+        function toggleColorPicker(e) {
             e.stopPropagation();
-            this.classList.toggle('active');
-        });
+            if (window.innerWidth <= 768) {
+                colorPicker.click();
+            } else {
+                colorDisplay.classList.toggle('active');
+            }
+        }
+
+        colorDisplay.addEventListener('click', toggleColorPicker);
 
         colorPicker.addEventListener('input', function() {
             colorDisplay.style.backgroundColor = colorPicker.value;
         });
 
-        document.addEventListener('click', function() {
-            colorDisplay.classList.remove('active');
+        colorPicker.addEventListener('change', function() {
+            colorDisplay.style.backgroundColor = colorPicker.value;
+            if (window.innerWidth > 768) {
+                colorDisplay.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== colorDisplay && e.target !== colorPicker) {
+                colorDisplay.classList.remove('active');
+            }
         });
 
         function startPosition(e) {
