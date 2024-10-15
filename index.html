@@ -89,9 +89,18 @@
             cursor: pointer;
             display: inline-block;
             margin-left: 10px;
+            position: relative;
         }
-        #toolbar input[type="color"] {
+        #colorPicker {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
             display: none;
+            z-index: 1000;
+        }
+        #colorDisplay.active #colorPicker {
+            display: block;
         }
         #menu-toggle {
             display: none;
@@ -143,9 +152,10 @@
     <button id="menu-toggle">☰</button>
     <div id="toolbar">
         <label for="colorPicker">
-            <div id="colorDisplay"></div>
+            <div id="colorDisplay">
+                <input type="color" id="colorPicker" value="#000000">
+            </div>
         </label>
-        <input type="color" id="colorPicker" value="#000000">
         <input type="range" id="brushSize" min="1" max="20" value="5">
         <select id="brushShape">
             <option value="round">מעוגל</option>
@@ -211,8 +221,17 @@
             };
         }
 
+        colorDisplay.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+        });
+
         colorPicker.addEventListener('input', function() {
             colorDisplay.style.backgroundColor = colorPicker.value;
+        });
+
+        document.addEventListener('click', function() {
+            colorDisplay.classList.remove('active');
         });
 
         function startPosition(e) {
